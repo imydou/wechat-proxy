@@ -4,10 +4,32 @@
 
 ## 方法
 
-修改hosts，使以下域名指向本程序
+~~修改hosts，使以下域名指向本程序~~
 ```text
 open.weixin.qq.com
 api.weixin.qq.com
+```
+
+太天真了，以上方法需要禁用ssl证书验证。
+
+无奈之举：
+
+/vendor/overtrue/socialite/src/Providers/WeChatProvider.php
+
+```php
+protected $baseUrl = 'https://your-domain.com/sns';
+
+protected function getAuthUrl($state)
+{
+    $path = 'oauth2/authorize';
+
+    if (in_array('snsapi_login', $this->scopes)) {
+        $path = 'qrconnect';
+    }
+
+    return $this->buildAuthUrlFromBase("https://your-domain/connect/{$path}", $state);
+}
+
 ```
 
 ## 路线
